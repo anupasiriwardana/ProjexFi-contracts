@@ -1,36 +1,42 @@
-# Sample Hardhat 3 Beta Project (`mocha` and `ethers`)
+# ProjexFi Contracts
 
-This project showcases a Hardhat 3 Beta project using `mocha` for tests and the `ethers` library for Ethereum interactions.
+This repository contains the core smart contracts and the Hardhat development environment for **ProjexFi**, a trustless Web3 crowdfunding and yield platform.
 
-To learn more about the Hardhat 3 Beta, please visit the [Getting Started guide](https://hardhat.org/docs/getting-started#getting-started-with-hardhat-3). To share your feedback, join our [Hardhat 3 Beta](https://hardhat.org/hardhat3-beta-telegram-group) Telegram group or [open an issue](https://github.com/NomicFoundation/hardhat/issues/new) in our GitHub issue tracker.
+> **⚠️ IMPORTANT: Deployment & Setup**
+> This repository is a microservice part of the larger ProjexFi ecosystem. 
+> To run this project, boot the local blockchain, and deploy the containers, please refer to the master initialization guide in the **[ProjexFi Root Repository](https://github.com/anupasiriwardana/ProjexFi)**.
 
-## Project Overview
+## 🛠 Tech Stack
+* **Solidity:** Smart contract development.
+* **Hardhat:** Ethereum development environment for compiling, deploying, and testing.
+* **TypeScript:** Scripting and configuration.
+* **Ethers.js (v6):** Blockchain interaction library.
 
-This example project includes:
+## 📁 Repository Structure
+* `/contracts` - Contains the raw `.sol` smart contracts (e.g., `RevenueRouter.sol`).
+* `/ignition/modules` - Contains Hardhat Ignition deployment scripts.
+* `/test` - Contains automated tests for contract logic and math.
+* `hardhat.config.ts` - Hardhat network and compiler configuration.
 
-- A simple Hardhat configuration file.
-- Foundry-compatible Solidity unit tests.
-- TypeScript integration tests using `mocha` and ethers.js
-- Examples demonstrating how to connect to different types of networks, including locally simulating OP mainnet.
+## 💻 Local Development Commands
+If you are developing smart contracts outside of the Docker environment, you can use the following commands:
 
-## Usage
+```bash
+# Compile smart contracts and generate the ABI (artifacts folder)
+npx hardhat compile
 
-### Running Tests
-
-To run all the tests in the project, execute the following command:
-
-```shell
+# Run the automated test suite
 npx hardhat test
+
+# Spin up a local ephemeral node
+npx hardhat node
+
+# Deploy to the local node
+npx hardhat ignition deploy ./ignition/modules/RevenueRouter.ts --network localhost
 ```
 
-You can also selectively run the Solidity or `mocha` tests:
 
-```shell
-npx hardhat test solidity
-npx hardhat test mocha
-```
-
-### Make a deployment to Sepolia
+### Make a deployment to Sepolia (Additional)
 
 This project includes an example Ignition module to deploy the contract. You can deploy this module to a locally simulated chain or to Sepolia.
 
@@ -53,5 +59,5 @@ npx hardhat keystore set SEPOLIA_PRIVATE_KEY
 After setting the variable, you can run the deployment with the Sepolia network:
 
 ```shell
-npx hardhat ignition deploy --network sepolia ignition/modules/Counter.ts
+npx hardhat ignition deploy --network sepolia ignition/modules/RevenueRouter.ts
 ```
