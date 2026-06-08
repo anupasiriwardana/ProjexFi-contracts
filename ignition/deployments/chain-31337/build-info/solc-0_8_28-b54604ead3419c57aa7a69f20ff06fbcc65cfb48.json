@@ -1,0 +1,49 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-b54604ead3419c57aa7a69f20ff06fbcc65cfb48",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "compilerType": "solc",
+  "toolVersions": {
+    "hardhat": "3.6.0"
+  },
+  "userSourceNameMap": {
+    "contracts/RevenueRouter.sol": "project/contracts/RevenueRouter.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode.linkReferences",
+            "evm.bytecode.object",
+            "evm.bytecode.opcodes",
+            "evm.bytecode.sourceMap",
+            "evm.deployedBytecode.immutableReferences",
+            "evm.deployedBytecode.linkReferences",
+            "evm.deployedBytecode.object",
+            "evm.deployedBytecode.opcodes",
+            "evm.deployedBytecode.sourceMap",
+            "evm.methodIdentifiers"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/RevenueRouter.sol": {
+        "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.20;\n\ncontract RevenueRouter {\n    // 1. State Variables\n    address payable public creatorAddress;\n    uint256 public totalDividendPool;\n\n    // 2. The Event (Your Node.js backend will listen for this!)\n    event PaymentReceived(address indexed customer, uint256 amountPaid, uint256 creatorCut, uint256 investorCut);\n\n    // 3. Constructor (Runs once when deployed)\n    constructor(address payable _creatorAddress) {\n        creatorAddress = _creatorAddress;\n    }\n\n    // 4. The Core Logic: Intercepting and Splitting the Money\n    function routePayment() public payable {\n        // Require that the customer actually sent some money\n        require(msg.value > 0, \"You must send ETH/USDC to pay.\");\n\n        uint256 paymentAmount = msg.value;\n\n        // --- THE WEB3 MATH LESSON ---\n        // Solidity does NOT support decimals (floating points). You cannot do `amount * 0.80`.\n        // Instead, you must multiply first, then divide. \n        \n        // Calculate the 80% cut for the creator\n        uint256 creatorCut = (paymentAmount * 80) / 100;\n        \n        // Calculate the 20% cut for the investors\n        uint256 investorCut = paymentAmount - creatorCut; // Subtraction prevents rounding dust\n\n        // Add the 20% to the internal dividend pool ledger\n        totalDividendPool += investorCut;\n\n        // Instantly push the 80% to the Creator's wallet\n        (bool success, ) = creatorAddress.call{value: creatorCut}(\"\");\n        require(success, \"Transfer to creator failed!\");\n\n        // Broadcast the event to the blockchain so your Node.js server hears it\n        emit PaymentReceived(msg.sender, paymentAmount, creatorCut, investorCut);\n    }\n}\n"
+      }
+    }
+  }
+}
